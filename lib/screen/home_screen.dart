@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:random_number/constant/color.dart';
 
@@ -9,6 +11,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<int> randomNumbers = [123, 456, 789];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,20 +49,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [123, 456, 789]
+                    children: randomNumbers
+                        .asMap()
+                        .entries
                         .map(
-                          (e) => Row(
-                            children: e
-                                .toString()
-                                .split('')
-                                .map(
-                                  (t) => Image.asset(
-                                    'assets/images/$t.png',
-                                    height: 70,
-                                    width: 50,
-                                  ),
-                                )
-                                .toList(),
+                          (e) => Padding(
+                            padding: EdgeInsets.only(
+                              bottom: e.key == 2 ? 0 : 16.0,
+                            ),
+                            child: Row(
+                              children: e.value
+                                  .toString()
+                                  .split('')
+                                  .map(
+                                    (t) => Image.asset(
+                                      'assets/images/$t.png',
+                                      height: 70,
+                                      width: 50,
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
                           ),
                         )
                         .toList(),
@@ -69,7 +80,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: RED_COLOR),
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      for (int i = 0; i < 3; i++) {
+                        int val = 0;
+                        val += Random().nextInt(900) + 100;
+                        randomNumbers[i] = val;
+                      }
+                    });
+                  },
                   child: Text(
                     '생성하기',
                   ),
