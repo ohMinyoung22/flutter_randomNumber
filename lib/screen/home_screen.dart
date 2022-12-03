@@ -119,8 +119,8 @@ class _Body extends StatelessWidget {
                         .map(
                           (t) => Image.asset(
                             'assets/images/$t.png',
-                            height: 70,
-                            width: 50,
+                            height: 50,
+                            width: 30,
                           ),
                         )
                         .toList(),
