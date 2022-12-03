@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:random_number/component/number_row.dart';
 import 'package:random_number/constant/color.dart';
 import 'package:random_number/screen/settings_screen.dart';
 
@@ -13,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<int> randomNumbers = [123, 456, 789];
+  int maxNumber = 1000;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           child: Column(
             children: [
-              _Header(),
+              _Header(
+                onPressed: onSettingsPop,
+              ),
               _Body(
                 randomNumbers: randomNumbers,
               ),
@@ -39,13 +43,31 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void onSettingsPop() async {
+    final result = await Navigator.of(context).push<int?>(
+      MaterialPageRoute(
+        builder: (ctx) {
+          return SettingsScreen(
+            maxNumber: maxNumber,
+          );
+        },
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        maxNumber = result;
+      });
+    }
+  }
+
   void onPressed() {
     setState(() {
       List<int> newList = [];
 
       int numCount = 0;
       while (numCount < 3) {
-        int val = Random().nextInt(900) + 100;
+        int val = Random().nextInt(maxNumber);
 
         if (!newList.contains(val)) {
           newList.add(val);
@@ -59,7 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({super.key});
+  final VoidCallback? onPressed;
+
+  const _Header({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +96,7 @@ class _Header extends StatelessWidget {
               color: Colors.white, fontSize: 30.0, fontWeight: FontWeight.bold),
         ),
         IconButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) {
-                  return SettingsScreen();
-                },
-              ),
-            );
-          },
+          onPressed: onPressed,
           icon: Icon(
             Icons.settings,
             color: RED_COLOR,
@@ -112,18 +128,8 @@ class _Body extends StatelessWidget {
                   padding: EdgeInsets.only(
                     bottom: e.key == 2 ? 0 : 16.0,
                   ),
-                  child: Row(
-                    children: e.value
-                        .toString()
-                        .split('')
-                        .map(
-                          (t) => Image.asset(
-                            'assets/images/$t.png',
-                            height: 50,
-                            width: 30,
-                          ),
-                        )
-                        .toList(),
+                  child: NumberRow(
+                    number: e.value.toInt(),
                   ),
                 ),
               )
